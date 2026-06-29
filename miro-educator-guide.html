@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miro Educator Techniques — Mini-Session Design Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow:   #FFD02F;
+    --navy:     #1A1A2E;
+    --coral:    #FF6B6B;
+    --sage:     #52B788;
+    --sky:      #4FC3F7;
+    --lavender: #B39DDB;
+    --white:    #FFFFFF;
+    --off:      #F7F6F2;
+    --mid:      #6B6B7B;
+    --border:   #E4E2DC;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  header {
+    background: var(--navy);
+    padding: 56px 40px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: var(--yellow);
+    border-radius: 50%;
+    opacity: .12;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 30%;
+    width: 200px; height: 200px;
+    background: var(--coral);
+    border-radius: 50%;
+    opacity: .1;
+  }
+
+  .header-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.15;
+    max-width: 640px;
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--yellow);
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,.6);
+    max-width: 520px;
+    line-height: 1.65;
+  }
+
+  /* ── CANVAS AREA ─────────────────────────── */
+  .canvas-wrap {
+    padding: 48px 32px 64px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARD GRID ───────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  /* ── CARD ────────────────────────────────── */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26,26,46,.06), 0 0 0 1px rgba(26,26,46,.05);
+    transition: transform .25s ease, box-shadow .25s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card:hover {
+    transform: translateY(-4px) rotate(.4deg);
+    box-shadow: 0 16px 40px rgba(26,26,46,.13), 0 0 0 1px rgba(26,26,46,.06);
+  }
+
+  /* coloured tape strip at top */
+  .tape {
+    height: 6px;
+    width: 100%;
+  }
+
+  .card-body {
+    padding: 28px 28px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── ICON + TITLE ────────────────────────── */
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .technique-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--navy);
+  }
+
+  /* ── WHAT IT IS ──────────────────────────── */
+  .what-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 6px;
+  }
+
+  .what-text {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #3A3A52;
+    margin-bottom: 20px;
+  }
+
+  /* ── PILL ROW ────────────────────────────── */
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── BEST FOR ────────────────────────────── */
+  .best-for-block {
+    background: #F0FAF4;
+    border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+  }
+
+  .best-for-block .what-label { color: var(--sage); margin-bottom: 4px; }
+
+  .best-for-block ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .best-for-block li {
+    font-size: 13px;
+    color: #2D6A4F;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+
+  .best-for-block li::before {
+    content: '✓';
+    font-size: 11px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: var(--sage);
+  }
+
+  /* ── HOW TO SET UP ───────────────────────── */
+  .steps-block {
+    margin-bottom: 20px;
+  }
+
+  .steps-block ol {
+    list-style: none;
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .steps-block li {
+    counter-increment: step;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #3A3A52;
+  }
+
+  .steps-block li::before {
+    content: counter(step);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── PRO TIP ─────────────────────────────── */
+  .tip-block {
+    background: #FFFBEA;
+    border: 1px solid rgba(255,208,47,.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: auto;
+  }
+
+  .tip-block .what-label {
+    color: #B8860B;
+    margin-bottom: 4px;
+  }
+
+  .tip-block p {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #7A5F00;
+  }
+
+  /* ── CARD COLOUR THEMES ──────────────────── */
+  .card--yellow .tape  { background: var(--yellow); }
+  .card--yellow .card-icon { background: #FFF8D6; }
+  .card--yellow .steps-block li::before { background: #FFF3B0; color: #8A6A00; }
+
+  .card--coral .tape   { background: var(--coral); }
+  .card--coral .card-icon  { background: #FFE8E8; }
+  .card--coral .steps-block li::before { background: #FFD5D5; color: #9B2A2A; }
+
+  .card--sage .tape    { background: var(--sage); }
+  .card--sage .card-icon   { background: #EAFAF2; }
+  .card--sage .steps-block li::before { background: #C8EDD9; color: #1D6A47; }
+
+  .card--sky .tape     { background: var(--sky); }
+  .card--sky .card-icon    { background: #E3F4FD; }
+  .card--sky .steps-block li::before { background: #B8E9FA; color: #0A5F80; }
+
+  .card--lavender .tape { background: var(--lavender); }
+  .card--lavender .card-icon { background: #EDE7F6; }
+  .card--lavender .steps-block li::before { background: #D8CCEF; color: #5E35B1; }
+
+  /* pill colours per card theme */
+  .card--yellow  .pill { background: #FFF3B0; color: #7A5F00; }
+  .card--coral   .pill { background: #FFE0E0; color: #8C2020; }
+  .card--sage    .pill { background: #D4EDE2; color: #1A5C38; }
+  .card--sky     .pill { background: #CBF0FF; color: #0A5F80; }
+  .card--lavender .pill { background: #E8E0FF; color: #4527A0; }
+
+  /* ── FOOTER ──────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mid);
+  }
+
+  footer strong { color: var(--navy); }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 620px) {
+    header { padding: 40px 24px 36px; }
+    .canvas-wrap { padding: 32px 16px 48px; }
+    .cards { grid-template-columns: 1fr; }
+    .card:hover { transform: translateY(-3px) rotate(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <span class="badge">Educator Reference Guide</span>
+    <h1>5 Miro Techniques for<br><em>Engaging Mini-Sessions</em></h1>
+    <p class="subtitle">A quick-reference card deck to help you pick the right Miro technique when designing your next facilitated session — from icebreakers to deep-dives.</p>
+  </div>
+</header>
+
+<!-- ── CARDS ── -->
+<div class="canvas-wrap">
+  <p class="section-label">Techniques</p>
+  <div class="cards">
+
+    <!-- ── 1. STICKY NOTE STORM ── -->
+    <div class="card card--yellow">
+      <div class="tape"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">🗒️</div>
+          <div class="card-meta">
+            <span class="technique-num">Technique 01</span>
+            <h2>Sticky Note Storm</h2>
+          </div>
+        </div>
+
+        <p class="what-label">What it is</p>
+        <p class="what-text">Learners rapidly add colour-coded sticky notes to a shared Miro board around a central prompt. Ideas are visible to all in real time, creating a crowd-sourced idea wall within minutes.</p>
+
+        <div class="pill-row">
+          <span class="pill">Brainstorming</span>
+          <span class="pill">Divergent thinking</span>
+          <span class="pill">5–25 min</span>
+        </div>
+
+        <div class="best-for-block">
+          <p class="what-label">Best for</p>
+          <ul>
+            <li>Opening a session — surfaces prior knowledge fast</li>
+            <li>Generating many ideas before narrowing</li>
+            <li>Groups of 4–30 learners</li>
+          </ul>
+        </div>
+
+        <div class="steps-block">
+          <p class="what-label">Quick setup</p>
+          <ol>
+            <li>Create a frame with the central question in large text</li>
+            <li>Assign one sticky colour per team or perspective</li>
+            <li>Set a visible timer (3–5 min) and prompt silent writing first</li>
+            <li>Cluster similar notes together as a group debrief</li>
+          </ol>
+        </div>
+
+        <div class="tip-block">
+          <p class="what-label">⚡ Pro tip</p>
+          <p>Use Miro's "Private Mode" so learners can't anchor on each other's ideas during individual thinking time — reveal all at once for a genuine surprise round.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. AFFINITY MAPPING ── -->
+    <div class="card card--coral">
+      <div class="tape"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">🗂️</div>
+          <div class="card-meta">
+            <span class="technique-num">Technique 02</span>
+            <h2>Affinity Mapping</h2>
+          </div>
+        </div>
+
+        <p class="what-label">What it is</p>
+        <p class="what-text">Learners physically drag and cluster sticky notes or cards into emerging theme groups on the Miro canvas, discovering patterns and shared meanings through movement and discussion.</p>
+
+        <div class="pill-row">
+          <span class="pill">Synthesis</span>
+          <span class="pill">Pattern recognition</span>
+          <span class="pill">10–30 min</span>
+        </div>
+
+        <div class="best-for-block">
+          <p class="what-label">Best for</p>
+          <ul>
+            <li>Making sense of large amounts of qualitative data</li>
+            <li>Mid-session to consolidate a Sticky Note Storm</li>
+            <li>Collaborative sense-making in teams</li>
+          </ul>
+        </div>
+
+        <div class="steps-block">
+          <p class="what-label">Quick setup</p>
+          <ol>
+            <li>Start from an existing note collection or provide pre-loaded cards</li>
+            <li>Ask groups to silently move similar ideas near each other</li>
+            <li>Name each cluster with a header sticky note</li>
+            <li>Vote on which cluster is most impactful using dot stickers</li>
+          </ol>
+        </div>
+
+        <div class="tip-block">
+          <p class="what-label">⚡ Pro tip</p>
+          <p>Lock your header labels in place so they don't get accidentally dragged — right-click a sticky and choose "Lock." This keeps cluster names visible as learners sort.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. COLLABORATIVE CANVAS MAPPING ── -->
+    <div class="card card--sage">
+      <div class="tape"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">🗺️</div>
+          <div class="card-meta">
+            <span class="technique-num">Technique 03</span>
+            <h2>Concept Mapping</h2>
+          </div>
+        </div>
+
+        <p class="what-label">What it is</p>
+        <p class="what-text">Learners build a visual map of how ideas, terms, or processes connect, using Miro's shapes, arrows, and connectors to externalise mental models and reveal relationships.</p>
+
+        <div class="pill-row">
+          <span class="pill">Deep understanding</span>
+          <span class="pill">Critical thinking</span>
+          <span class="pill">15–45 min</span>
+        </div>
+
+        <div class="best-for-block">
+          <p class="what-label">Best for</p>
+          <ul>
+            <li>Complex topics with many inter-related parts</li>
+            <li>Assessing understanding — maps reveal misconceptions</li>
+            <li>Small groups of 2–5 building a shared mental model</li>
+          </ul>
+        </div>
+
+        <div class="steps-block">
+          <p class="what-label">Quick setup</p>
+          <ol>
+            <li>Provide a seed concept in the centre of each group's frame</li>
+            <li>Ask learners to add nodes and draw labelled arrows between them</li>
+            <li>Prompt: "What causes this?" and "What does this affect?"</li>
+            <li>Gallery walk — each group presents their map in 90 seconds</li>
+          </ol>
+        </div>
+
+        <div class="tip-block">
+          <p class="what-label">⚡ Pro tip</p>
+          <p>Use Miro's "Smart Drawing" feature — drawing a rough arrow automatically snaps to a clean connector, keeping maps legible even when learners work fast.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. DOT VOTING ── -->
+    <div class="card card--sky">
+      <div class="tape"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">🗳️</div>
+          <div class="card-meta">
+            <span class="technique-num">Technique 04</span>
+            <h2>Dot Voting</h2>
+          </div>
+        </div>
+
+        <p class="what-label">What it is</p>
+        <p class="what-text">Each learner gets a fixed number of coloured dot stickers to allocate across ideas or options on the board. The distribution of dots makes group priorities instantly visible and data-driven.</p>
+
+        <div class="pill-row">
+          <span class="pill">Decision-making</span>
+          <span class="pill">Prioritisation</span>
+          <span class="pill">3–10 min</span>
+        </div>
+
+        <div class="best-for-block">
+          <p class="what-label">Best for</p>
+          <ul>
+            <li>Narrowing down after a brainstorm — fast and democratic</li>
+            <li>Surfacing group consensus without discussion bias</li>
+            <li>Any group size; scales to 60+ learners easily</li>
+          </ul>
+        </div>
+
+        <div class="steps-block">
+          <p class="what-label">Quick setup</p>
+          <ol>
+            <li>Use Miro's built-in Voting Session (toolbar → More → Voting)</li>
+            <li>Set the number of votes per person (3 is a good default)</li>
+            <li>Allow multi-voting on a single item only if you want strong signals</li>
+            <li>Reveal results together and discuss the top 2–3 choices</li>
+          </ol>
+        </div>
+
+        <div class="tip-block">
+          <p class="what-label">⚡ Pro tip</p>
+          <p>Miro's voting timer creates healthy urgency. Set it to 90 seconds — long enough to read all options, short enough to prevent overthinking and keep the energy high.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 5. BREAKOUT FRAMES ── -->
+    <div class="card card--lavender">
+      <div class="tape"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon">🖼️</div>
+          <div class="card-meta">
+            <span class="technique-num">Technique 05</span>
+            <h2>Breakout Frames</h2>
+          </div>
+        </div>
+
+        <p class="what-label">What it is</p>
+        <p class="what-text">Pre-built, labelled frames act as dedicated "rooms" on the Miro canvas for different groups or tasks. Each team works simultaneously in their own space, then the facilitator zooms out for a full-board debrief.</p>
+
+        <div class="pill-row">
+          <span class="pill">Small-group work</span>
+          <span class="pill">Parallel processing</span>
+          <span class="pill">10–40 min</span>
+        </div>
+
+        <div class="best-for-block">
+          <p class="what-label">Best for</p>
+          <ul>
+            <li>Replicating breakout room dynamics on a single board</li>
+            <li>Comparing different group outputs side by side</li>
+            <li>Sessions where groups tackle the same prompt independently</li>
+          </ul>
+        </div>
+
+        <div class="steps-block">
+          <p class="what-label">Quick setup</p>
+          <ol>
+            <li>Create one frame per group with a clear title and instructions inside</li>
+            <li>Include template elements (e.g., blank 2×2 matrix) inside each frame</li>
+            <li>Share direct frame links so groups jump straight to their space</li>
+            <li>Use "Present" mode to fly between frames during the debrief</li>
+          </ol>
+        </div>
+
+        <div class="tip-block">
+          <p class="what-label">⚡ Pro tip</p>
+          <p>Add a "Parking Lot" frame outside all group frames — learners drop off-topic but interesting ideas there instead of derailing their group, and you review it at the end.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+</div><!-- /canvas-wrap -->
+
+<footer>
+  <strong>Miro Educator Guide</strong> · 5 Techniques for Mini-Session Design · For best results, combine 2–3 techniques in a single session (e.g. Sticky Note Storm → Affinity Mapping → Dot Voting).
+</footer>
+
+</body>
+</html>

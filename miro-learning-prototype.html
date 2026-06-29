@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miro for Trainers — Learning Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0F1C2E;
+    --navy-mid: #1A2F4A;
+    --cobalt: #2563EB;
+    --cobalt-light: #DBEAFE;
+    --amber: #F59E0B;
+    --amber-light: #FEF3C7;
+    --sage: #10B981;
+    --sage-light: #D1FAE5;
+    --page-bg: #F8F6F1;
+    --white: #FFFFFF;
+    --text-dark: #0F1C2E;
+    --text-mid: #374151;
+    --text-muted: #6B7280;
+    --border: #E5E2D9;
+    --border-strong: #C9C5BB;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(15,28,46,0.08);
+    --shadow-md: 0 4px 16px rgba(15,28,46,0.10);
+    --shadow-lg: 0 12px 40px rgba(15,28,46,0.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--page-bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar-logo {
+    width: 28px;
+    height: 28px;
+    background: var(--cobalt);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .topbar-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+  }
+  .topbar-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .badge-small {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-async { background: var(--cobalt-light); color: var(--cobalt); }
+  .badge-live { background: var(--sage-light); color: #065F46; }
+  .badge-apply { background: var(--amber-light); color: #92400E; }
+
+  .progress-bar-wrap {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .pbar-seg {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.18);
+    transition: background 0.3s;
+  }
+  .pbar-seg.done { background: var(--sage); }
+  .pbar-seg.active { background: var(--cobalt); }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1.5rem;
+    gap: 2rem;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    padding: 2rem 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-left: 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 2px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .nav-item:hover { background: rgba(15,28,46,0.06); }
+  .nav-item.active { background: var(--cobalt-light); }
+  .nav-item.active .nav-dot { background: var(--cobalt); border-color: var(--cobalt); }
+  .nav-item.active .nav-name { color: var(--cobalt); }
+  .nav-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding-top: 3px;
+  }
+  .nav-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    background: var(--page-bg);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .nav-dot.done { background: var(--sage); border-color: var(--sage); }
+  .nav-line {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+    margin-top: 2px;
+  }
+  .nav-text { flex: 1; }
+  .nav-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+    line-height: 1.3;
+  }
+  .nav-dur {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    flex: 1;
+    padding: 2rem 0 4rem;
+    min-width: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(37,99,235,0.35) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40%;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-title span {
+    color: var(--amber);
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hero-stat-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .hero-stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+  }
+  .hero-stat-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.12);
+    align-self: stretch;
+  }
+  .hero-outcomes {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-outcome-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 12px;
+  }
+  .chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sage);
+    flex-shrink: 0;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    margin-top: 2rem;
+    padding-top: 0.5rem;
+  }
+  .section-header:first-of-type { margin-top: 0; }
+  .phase-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .phase-pill.async { background: var(--cobalt-light); color: var(--cobalt); }
+  .phase-pill.live { background: var(--sage-light); color: #065F46; }
+  .phase-pill.apply { background: var(--amber-light); color: #92400E; }
+  .phase-pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .async .phase-pill-dot { background: var(--cobalt); }
+  .live .phase-pill-dot { background: var(--sage); }
+  .apply .phase-pill-dot { background: var(--amber); }
+  .section-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .section-dur {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  /* ── SESSION CARD ── */
+  .session-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .session-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+  .session-card.expanded { border-color: #CBD5E1; box-shadow: var(--shadow-md); }
+
+  .session-trigger {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .session-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+  .icon-cobalt { background: var(--cobalt-light); }
+  .icon-sage { background: var(--sage-light); }
+  .icon-amber { background: var(--amber-light); }
+  .session-meta { flex: 1; min-width: 0; }
+  .session-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+  .session-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .session-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .session-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .chevron-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  .session-card.expanded .chevron-icon { transform: rotate(90deg); }
+
+  /* ── SESSION BODY ── */
+  .session-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .session-body-inner {
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--page-bg);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    margin-bottom: 16px;
+    margin-top: 16px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text-dark); }
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--text-dark);
+    box-shadow: 0 1px 3px rgba(15,28,46,0.1);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── CONTENT GRID ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .content-box {
+    background: var(--page-bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+  }
+  .content-box-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .content-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .content-box li {
+    font-size: 13px;
+    color: var(--text-mid);
+    padding: 3px 0 3px 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .content-box li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--border-strong);
+  }
+
+  /* ── FACILITATOR NOTES ── */
+  .fac-notes {
+    background: #EFF6FF;
+    border-left: 3px solid var(--cobalt);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #1E40AF;
+    line-height: 1.6;
+  }
+  .fac-notes strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--cobalt);
+  }
+
+  /* ── OUTCOME ROW ── */
+  .outcome-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--sage-light);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: #065F46;
+    font-weight: 500;
+  }
+  .outcome-check {
+    width: 16px;
+    height: 16px;
+    background: var(--sage);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .outcome-check svg {
+    width: 10px;
+    height: 10px;
+    stroke: #fff;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── STICKY NOTE (apply cards) ── */
+  .sticky-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .sticky {
+    background: var(--amber-light);
+    border-radius: 3px;
+    padding: 14px;
+    border: 1px solid #FDE68A;
+    position: relative;
+    box-shadow: 2px 3px 8px rgba(15,28,46,0.08);
+  }
+  .sticky::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 16px; height: 16px;
+    background: linear-gradient(225deg, #FEF3C7 50%, transparent 50%);
+  }
+  .sticky-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #92400E;
+    margin-bottom: 6px;
+  }
+  .sticky-text {
+    font-size: 13px;
+    color: #78350F;
+    line-height: 1.6;
+  }
+
+  /* ── DIVIDER ── */
+  .phase-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  /* ── TAKEAWAY BOX ── */
+  .takeaway-box {
+    background: var(--navy);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  .takeaway-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .takeaway-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .takeaway-item {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+  }
+  .takeaway-item-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .takeaway-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .takeaway-item-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+
+  /* ── MARK COMPLETE BUTTON ── */
+  .btn-complete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-mid);
+    transition: all 0.15s;
+    margin-top: 12px;
+  }
+  .btn-complete:hover { border-color: var(--sage); color: #065F46; background: var(--sage-light); }
+  .btn-complete.marked { background: var(--sage); color: #fff; border-color: var(--sage); }
+  .btn-complete svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── PROGRESS RING WIDGET ── */
+  .progress-widget {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .progress-ring-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .ring-wrap { position: relative; display: inline-block; }
+  .ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring-pct {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .ring-sublabel {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .sidebar-session-list {
+    margin-top: 0.75rem;
+  }
+  .sidebar-session-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 3px 0;
+  }
+  .sidebar-session-item.done { color: var(--sage); }
+  .sidebar-check {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-strong);
+    flex-shrink: 0;
+  }
+  .sidebar-session-item.done .sidebar-check {
+    background: var(--sage);
+    border-color: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">M</div>
+    <div>
+      <div class="topbar-title">Miro for Trainers</div>
+      <div class="topbar-meta">MVP Prototype · 1-day blended</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="badge-small badge-async">Async</span>
+    <span class="badge-small badge-live">Live</span>
+    <span class="badge-small badge-apply">Apply</span>
+    <div class="progress-bar-wrap" id="topProgressBar" style="gap:3px;margin-left:8px;">
+      <div class="pbar-seg" style="width:20px;" data-index="0"></div>
+      <div class="pbar-seg" style="width:20px;" data-index="1"></div>
+      <div class="pbar-seg" style="width:20px;" data-index="2"></div>
+      <div class="pbar-seg" style="width:20px;" data-index="3"></div>
+      <div class="pbar-seg" style="width:20px;" data-index="4"></div>
+      <div class="pbar-seg" style="width:20px;" data-index="5"></div>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Journey</div>
+
+    <a class="nav-item" href="#phase-0">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="0"></div>
+        <div class="nav-line"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Orient yourself</div>
+        <div class="nav-dur">Pre-work · 20 min</div>
+      </div>
+    </a>
+
+    <a class="nav-item" href="#phase-1">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="1"></div>
+        <div class="nav-line"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Miro canvas fundamentals</div>
+        <div class="nav-dur">Live · 45 min</div>
+      </div>
+    </a>
+
+    <a class="nav-item" href="#phase-2">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="2"></div>
+        <div class="nav-line"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Run a collaborative activity</div>
+        <div class="nav-dur">Live · 60 min</div>
+      </div>
+    </a>
+
+    <a class="nav-item" href="#phase-3">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="3"></div>
+        <div class="nav-line"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Map your lesson</div>
+        <div class="nav-dur">Solo · 30 min</div>
+      </div>
+    </a>
+
+    <a class="nav-item" href="#phase-4">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="4"></div>
+        <div class="nav-line"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Workshop design clinic</div>
+        <div class="nav-dur">Live · 45 min</div>
+      </div>
+    </a>
+
+    <a class="nav-item" href="#phase-5">
+      <div class="nav-dot-col">
+        <div class="nav-dot" data-phase="5"></div>
+      </div>
+      <div class="nav-text">
+        <div class="nav-name">Micro-teach + close</div>
+        <div class="nav-dur">Live → Apply · 65 min</div>
+      </div>
+    </a>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Progress ring -->
+    <div class="progress-widget">
+      <div class="progress-ring-label">Your progress</div>
+      <div class="ring-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#E5E2D9" stroke-width="6"/>
+          <circle id="progressCircle" cx="40" cy="40" r="32" fill="none" stroke="#10B981" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"
+            transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.5s ease"/>
+        </svg>
+        <div class="ring-text">
+          <div class="ring-pct" id="ringPct">0%</div>
+          <div class="ring-sublabel">done</div>
+        </div>
+      </div>
+      <div class="sidebar-session-list" id="sidebarSessionList"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Learning Prototype · Instructional Design</div>
+      <div class="hero-title">Miro for <span>Trainers</span></div>
+      <p class="hero-sub">A 1-day blended MVP that gives trainers both the confidence to use Miro and the pedagogical judgment to integrate it meaningfully into their facilitation and collaborative learning sessions.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val">1 day</div>
+          <div class="hero-stat-label">Total duration</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">Blended</div>
+          <div class="hero-stat-label">Async + Live + Apply</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">Beginners</div>
+          <div class="hero-stat-label">Entry level</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">6 blocks</div>
+          <div class="hero-stat-label">Progressive sessions</div>
+        </div>
+      </div>
+      <div class="hero-outcomes">
+        <div class="hero-outcome-chip"><span class="chip-dot"></span> Map a lesson to Miro</div>
+        <div class="hero-outcome-chip"><span class="chip-dot"></span> Run a collaborative session</div>
+        <div class="hero-outcome-chip"><span class="chip-dot"></span> Confident to experiment</div>
+      </div>
+    </div>
+
+    <!-- ──────────── PHASE 0 ──────────── -->
+    <div id="phase-0">
+      <div class="section-header">
+        <span class="phase-pill async"><span class="phase-pill-dot"></span> Async</span>
+        <span class="section-name">Pre-work — Orient yourself</span>
+        <span class="section-dur">~20 min</span>
+      </div>
+
+      <div class="session-card" data-session-id="0">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-cobalt">📱</div>
+          <div class="session-meta">
+            <div class="session-title">Module 0 — Set up and first steps</div>
+            <div class="session-sub">Self-paced · Watch + explore task · Complete before the day begins</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">20 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'skills-0')">Tool skills</button>
+              <button class="tab-btn" onclick="switchTab(this, 'pedagogy-0')">Pedagogy link</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-0')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="skills-0">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">What they do</div>
+                  <ul>
+                    <li>Create a free Miro account</li>
+                    <li>Watch a 5-min orientation video</li>
+                    <li>Tour the interface: canvas, toolbar, sidebar</li>
+                    <li>Place their first sticky note</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Resources provided</div>
+                  <ul>
+                    <li>Link to shared pre-work board</li>
+                    <li>Short "what is Miro?" explainer card</li>
+                    <li>Keyboard shortcut cheat sheet</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="pedagogy-0">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Framing prompt</div>
+                  <ul>
+                    <li>Think of one activity where learners cluster or share ideas</li>
+                    <li>Write it as a sticky note on the shared board</li>
+                    <li>This becomes their entry ticket to the live session</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Why this matters</div>
+                  <ul>
+                    <li>Activates prior knowledge before live session</li>
+                    <li>Creates a shared starting point for all learners</li>
+                    <li>Reduces first-touch anxiety with the tool</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-0">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Send the pre-work link 48 hours before. Check the shared board the morning of — if fewer than 60% of participants have posted a sticky, do a quick verbal recap of the task at the start of Block 1 to catch everyone up. Keep the board open in view during the live welcome.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Trainer arrives with Miro open and one sticky already placed
+            </div>
+            <button class="btn-complete" data-session="0" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-divider"></div>
+
+    <!-- ──────────── PHASE 1 ──────────── -->
+    <div id="phase-1">
+      <div class="section-header">
+        <span class="phase-pill live"><span class="phase-pill-dot"></span> Live</span>
+        <span class="section-name">Morning — Build the fundamentals</span>
+        <span class="section-dur">~1 hr 45 min</span>
+      </div>
+
+      <div class="session-card" data-session-id="1">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-sage">🗂️</div>
+          <div class="session-meta">
+            <div class="session-title">Block 1 — The Miro canvas as a learning space</div>
+            <div class="session-sub">Live · Facilitator demo + guided practice · Whole group</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">45 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'skills-1')">Tool skills</button>
+              <button class="tab-btn" onclick="switchTab(this, 'pedagogy-1')">Pedagogy link</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-1')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="skills-1">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Key features covered</div>
+                  <ul>
+                    <li>Frames — creating zones per activity</li>
+                    <li>Sticky notes, text boxes, basic shapes</li>
+                    <li>Connectors and simple arrows</li>
+                    <li>Inviting participants + live cursors</li>
+                    <li>Presentation mode (follow the facilitator)</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Practice task</div>
+                  <ul>
+                    <li>Build a 3-frame board structure</li>
+                    <li>Label each frame for a distinct activity</li>
+                    <li>Add a welcome sticky in frame 1</li>
+                    <li>Try presentation mode on their board</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="pedagogy-1">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Pedagogical framing</div>
+                  <ul>
+                    <li>Frames = lesson structure made visible</li>
+                    <li>The board mirrors a workshop agenda</li>
+                    <li>Visual space acts as shared working memory</li>
+                    <li>Spatial design signals learning intent</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Facilitation strategy</div>
+                  <ul>
+                    <li>Think aloud while building live</li>
+                    <li>Show the "messy" version then the clean one</li>
+                    <li>Use the pre-work stickies as a live example</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-1">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Start by reviewing the pre-work stickies together — this validates their effort and anchors the session in their own context. Build the demo board in real time rather than showing a finished version. Narrate each decision: "I'm creating a frame here because I want learners to know exactly where this activity lives." Give 10 minutes of free practice before moving on.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Trainer has a 3-frame board with a clear zone per activity
+            </div>
+            <button class="btn-complete" data-session="1" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="session-card" data-session-id="2">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-sage">👥</div>
+          <div class="session-meta">
+            <div class="session-title">Block 2 — Running a collaborative activity in Miro</div>
+            <div class="session-sub">Live · Trainer-as-learner simulation · Pairs then whole group</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">60 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'skills-2')">Tool skills</button>
+              <button class="tab-btn" onclick="switchTab(this, 'pedagogy-2')">Pedagogy link</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-2')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="skills-2">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Key features covered</div>
+                  <ul>
+                    <li>Voting with dot stickers</li>
+                    <li>Timer widget for timed tasks</li>
+                    <li>Grouping and clustering sticky notes</li>
+                    <li>Locking objects for stability</li>
+                    <li>Zoom to selection for whole-group review</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Simulation activity</div>
+                  <ul>
+                    <li>Topic: "What makes a good training activity?"</li>
+                    <li>Diverge: everyone adds stickies (5 min)</li>
+                    <li>Cluster: pairs group similar ideas (10 min)</li>
+                    <li>Converge: dot-vote on top insights (5 min)</li>
+                    <li>Debrief from both learner + facilitator view</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="pedagogy-2">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Collaborative learning link</div>
+                  <ul>
+                    <li>Diverge → converge as a learning structure</li>
+                    <li>Accountability through visible contribution</li>
+                    <li>Facilitation moves: signal phases, hold silence</li>
+                    <li>Managing "Miro chaos" in live sessions</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Discussion prompts</div>
+                  <ul>
+                    <li>What did it feel like as a participant?</li>
+                    <li>What would you do differently as a facilitator?</li>
+                    <li>Where did the tool help — and where did it hinder?</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-2">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Position this as a simulation: participants play learners first, then step into the facilitator perspective for the debrief. When clustering happens, expect noise and some disorder — that is intentional. In the debrief, highlight what Miro made easier AND harder. This tension is the pedagogical insight you want them to hold.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Trainers have completed a dot-vote activity they also just experienced as a learner
+            </div>
+            <button class="btn-complete" data-session="2" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-divider"></div>
+
+    <!-- ──────────── PHASE 3 ──────────── -->
+    <div id="phase-3">
+      <div class="section-header">
+        <span class="phase-pill apply"><span class="phase-pill-dot"></span> Apply</span>
+        <span class="section-name">Midday solo sprint — Map your lesson</span>
+        <span class="section-dur">30 min</span>
+      </div>
+
+      <div class="session-card" data-session-id="3">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-amber">🗺️</div>
+          <div class="session-meta">
+            <div class="session-title">Solo task — Map one of your lessons to Miro</div>
+            <div class="session-sub">Self-paced · Structured template · Individual work</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">30 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'task-3')">Task guide</button>
+              <button class="tab-btn" onclick="switchTab(this, 'scaffold-3')">Scaffold</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-3')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="task-3">
+              <div class="sticky-container">
+                <div class="sticky">
+                  <div class="sticky-label">Step 1</div>
+                  <div class="sticky-text">Choose one lesson you already own and know well</div>
+                </div>
+                <div class="sticky">
+                  <div class="sticky-label">Step 2</div>
+                  <div class="sticky-text">Map each activity to a Miro frame — use one frame per stage</div>
+                </div>
+                <div class="sticky">
+                  <div class="sticky-label">Step 3</div>
+                  <div class="sticky-text">Mark each activity: solo / pairs / whole group</div>
+                </div>
+                <div class="sticky">
+                  <div class="sticky-label">Step 4</div>
+                  <div class="sticky-text">Flag one thing you're unsure about with a red sticky</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="scaffold-3">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Template provided</div>
+                  <ul>
+                    <li>Pre-built "lesson mapper" Miro template</li>
+                    <li>3 frames: Warm-up / Core / Close</li>
+                    <li>Grouping labels already in place</li>
+                    <li>Colour key for solo/pair/group</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Decision guide card</div>
+                  <ul>
+                    <li>When to use stickies vs text boxes</li>
+                    <li>When to use frames vs open canvas</li>
+                    <li>Tips for grouping size (8–15 learners)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-3">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                This is intentional solo time — resist the urge to help. Let trainers struggle productively. Circulate quietly and note the red flags for the afternoon Q&A. Before the afternoon starts, scan all the boards and pick 2–3 examples with interesting choices (not necessarily the best ones) to open the clinic.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Each trainer has a draft Miro board of a real lesson, ready for peer feedback
+            </div>
+            <button class="btn-complete" data-session="3" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-divider"></div>
+
+    <!-- ──────────── PHASE 4 ──────────── -->
+    <div id="phase-4">
+      <div class="section-header">
+        <span class="phase-pill live"><span class="phase-pill-dot"></span> Live</span>
+        <span class="section-name">Afternoon — Facilitate with confidence</span>
+        <span class="section-dur">~1 hr 30 min</span>
+      </div>
+
+      <div class="session-card" data-session-id="4">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-sage">🔬</div>
+          <div class="session-meta">
+            <div class="session-title">Block 3 — Workshop design clinic</div>
+            <div class="session-sub">Live · Peer review + facilitator coaching · Pairs then group</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">45 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'skills-4')">Tool skills</button>
+              <button class="tab-btn" onclick="switchTab(this, 'pedagogy-4')">Pedagogy link</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-4')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="skills-4">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">New features introduced</div>
+                  <ul>
+                    <li>Comments and @mentions for feedback</li>
+                    <li>Breakout frames (assigning groups to zones)</li>
+                    <li>Share board link + export snapshot</li>
+                    <li>Board permissions (viewer vs editor)</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Clinic process</div>
+                  <ul>
+                    <li>Pairs swap board links</li>
+                    <li>Leave 2 "warm" + 1 "wonder" comment each</li>
+                    <li>Facilitator selects 2 boards to discuss live</li>
+                    <li>Whole group: what design choices stand out?</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="pedagogy-4">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Workshop design principles</div>
+                  <ul>
+                    <li>Structuring a workshop arc on Miro</li>
+                    <li>Facilitator view vs participant view</li>
+                    <li>The 3-zone workshop frame pattern</li>
+                    <li>When NOT to use Miro in a session</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Peer learning strategy</div>
+                  <ul>
+                    <li>"Warm / Wonder" feedback protocol</li>
+                    <li>Feedback as formative assessment</li>
+                    <li>Safe-to-fail design review culture</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-4">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Use comments rather than verbal feedback in the first 15 minutes — this keeps it in Miro and models the tool. When you select boards for group discussion, choose one that's spatial and well-organised, and one that's text-heavy. The contrast surfaces a pedagogical insight without you having to state it directly. End with: "What would a learner's first 90 seconds on this board feel like?"
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Each trainer has peer feedback on their lesson board using Miro's comment tool
+            </div>
+            <button class="btn-complete" data-session="4" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="session-card" data-session-id="5">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-sage">⚡</div>
+          <div class="session-meta">
+            <div class="session-title">Block 4 — Micro-teach: run your mini-session</div>
+            <div class="session-sub">Live · 5-min facilitation rehearsal per trainer · Rotating</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">45 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'skills-5')">Structure</button>
+              <button class="tab-btn" onclick="switchTab(this, 'pedagogy-5')">Pedagogy link</button>
+              <button class="tab-btn" onclick="switchTab(this, 'fac-5')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="skills-5">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">What each trainer does</div>
+                  <ul>
+                    <li>Facilitates 5 min of their mapped lesson</li>
+                    <li>Others join the board as participants</li>
+                    <li>Rotate every 5 min (2–3 trainers max)</li>
+                    <li>3-min debrief after each: warm / wonder / next</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Observation focus</div>
+                  <ul>
+                    <li>Did the frame structure help orientation?</li>
+                    <li>How did the trainer give instructions?</li>
+                    <li>What went wrong — and how did they recover?</li>
+                    <li>What would they do differently next time?</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="pedagogy-5">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">Deliberate practice</div>
+                  <ul>
+                    <li>Low-stakes rehearsal builds confidence fast</li>
+                    <li>Immediate peer debrief = formative assessment</li>
+                    <li>Watching peers models new facilitation moves</li>
+                    <li>Failure here is the safest it will ever be</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">What to name in the debrief</div>
+                  <ul>
+                    <li>Moments of "productive confusion"</li>
+                    <li>How spatial design guided (or confused) learners</li>
+                    <li>The tool fading into the background</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="fac-5">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Keep time strictly — 5 minutes is hard to fill and easy to overrun. Let the trainer lead; resist jumping in unless they freeze. During the debrief, ask the participants before asking the trainer: "What was it like to be a learner on that board?" Only select 2 trainers if time is tight — depth of debrief matters more than number of micro-teaches.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Each trainer has facilitated a real Miro session — not just watched one
+            </div>
+            <button class="btn-complete" data-session="5" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-divider"></div>
+
+    <!-- ──────────── PHASE 5: CLOSE ──────────── -->
+    <div id="phase-5">
+      <div class="section-header">
+        <span class="phase-pill apply"><span class="phase-pill-dot"></span> Apply</span>
+        <span class="section-name">Close + what comes next</span>
+        <span class="section-dur">20 min</span>
+      </div>
+
+      <div class="session-card" data-session-id="6" style="border-color:var(--border)">
+        <div class="session-trigger" onclick="toggleSession(this)">
+          <div class="session-icon-wrap icon-amber">📌</div>
+          <div class="session-meta">
+            <div class="session-title">Commitment board + experiment prompt</div>
+            <div class="session-sub">Live close → async follow-up · Whole group then individual</div>
+          </div>
+          <div class="session-right">
+            <span class="session-time">20 min</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="session-body">
+          <div class="session-body-inner">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'close-a')">Close activities</button>
+              <button class="tab-btn" onclick="switchTab(this, 'close-b')">Take-away pack</button>
+              <button class="tab-btn" onclick="switchTab(this, 'close-c')">Facilitator notes</button>
+            </div>
+
+            <div class="tab-panel active" id="close-a">
+              <div class="sticky-container">
+                <div class="sticky">
+                  <div class="sticky-label">I will try…</div>
+                  <div class="sticky-text">Each trainer adds one commitment sticky to the shared board — specific and actionable</div>
+                </div>
+                <div class="sticky">
+                  <div class="sticky-label">One open question</div>
+                  <div class="sticky-text">Park any unanswered questions as a "later" sticky — visible, not dismissed</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="close-b">
+              <div class="content-grid">
+                <div class="content-box">
+                  <div class="content-box-label">They leave with</div>
+                  <ul>
+                    <li>Their lesson board — theirs to keep and edit</li>
+                    <li>Facilitation quick-reference card (PDF)</li>
+                    <li>Two-week experiment prompt card</li>
+                    <li>Link to the shared commitment board</li>
+                  </ul>
+                </div>
+                <div class="content-box">
+                  <div class="content-box-label">Experiment prompt</div>
+                  <ul>
+                    <li>Run one activity on Miro in the next 2 weeks</li>
+                    <li>Take a screenshot of a learner moment</li>
+                    <li>Share back: what surprised you?</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="close-c">
+              <div class="fac-notes">
+                <strong>Facilitator guidance</strong>
+                Keep the close energetic — don't let the energy drop. Read out 2–3 commitment stickies aloud. Send the take-away pack link in the chat before anyone leaves. The shared commitment board stays live for 2 weeks so trainers can see each other's progress and feel accountable. Schedule a brief 30-min check-in at week 2.
+              </div>
+            </div>
+
+            <div class="outcome-row">
+              <div class="outcome-check"><svg viewBox="0 0 12 10"><polyline points="1.5 5 4.5 8 10.5 1.5"/></svg></div>
+              Every trainer leaves with a real board, a clear next step, and confidence to experiment
+            </div>
+            <button class="btn-complete" data-session="6" onclick="markDone(this)">
+              <svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg>
+              Mark complete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAKEAWAY BOX -->
+      <div class="takeaway-box">
+        <div class="takeaway-title">What trainers walk away with</div>
+        <div class="takeaway-items">
+          <div class="takeaway-item">
+            <div class="takeaway-item-icon">🗂️</div>
+            <div class="takeaway-item-name">Their own board</div>
+            <div class="takeaway-item-desc">A Miro board built around a lesson they already own</div>
+          </div>
+          <div class="takeaway-item">
+            <div class="takeaway-item-icon">⚡</div>
+            <div class="takeaway-item-name">Real practice</div>
+            <div class="takeaway-item-desc">They have facilitated a live session, not just watched one</div>
+          </div>
+          <div class="takeaway-item">
+            <div class="takeaway-item-icon">🧭</div>
+            <div class="takeaway-item-name">A clear next step</div>
+            <div class="takeaway-item-desc">A 2-week experiment prompt with a specific outcome to report back</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const TOTAL_SESSIONS = 7;
+  const completedSessions = new Set();
+
+  const sessionNames = [
+    'Module 0 — Set up',
+    'Block 1 — Canvas basics',
+    'Block 2 — Collaboration',
+    'Solo — Map your lesson',
+    'Block 3 — Design clinic',
+    'Block 4 — Micro-teach',
+    'Close + next steps'
+  ];
+
+  function buildSidebarList() {
+    const list = document.getElementById('sidebarSessionList');
+    list.innerHTML = '';
+    sessionNames.forEach((name, i) => {
+      const item = document.createElement('div');
+      item.className = 'sidebar-session-item' + (completedSessions.has(i) ? ' done' : '');
+      item.id = 'sidebar-item-' + i;
+      item.innerHTML = `<div class="sidebar-check">${completedSessions.has(i) ? '<svg width="8" height="7" viewBox="0 0 8 7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 3.5 3 5.5 7 1"/></svg>' : ''}</div><span>${name}</span>`;
+      list.appendChild(item);
+    });
+  }
+
+  function updateProgress() {
+    const pct = Math.round((completedSessions.size / TOTAL_SESSIONS) * 100);
+    const circumference = 201;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('progressCircle').style.strokeDashoffset = offset;
+    document.getElementById('ringPct').textContent = pct + '%';
+
+    const bars = document.querySelectorAll('#topProgressBar .pbar-seg');
+    bars.forEach((bar, i) => {
+      bar.classList.remove('done', 'active');
+      if (i < completedSessions.size) bar.classList.add('done');
+      else if (i === completedSessions.size) bar.classList.add('active');
+    });
+
+    buildSidebarList();
+  }
+
+  function markDone(btn) {
+    const sessionId = parseInt(btn.dataset.session);
+    if (completedSessions.has(sessionId)) {
+      completedSessions.delete(sessionId);
+      btn.classList.remove('marked');
+      btn.innerHTML = '<svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg> Mark complete';
+    } else {
+      completedSessions.add(sessionId);
+      btn.classList.add('marked');
+      btn.innerHTML = '<svg viewBox="0 0 14 12"><polyline points="1.5 6 5 9.5 12.5 1.5"/></svg> Completed';
+    }
+    updateProgress();
+  }
+
+  function toggleSession(trigger) {
+    const card = trigger.closest('.session-card');
+    const body = card.querySelector('.session-body');
+    const isExpanded = card.classList.contains('expanded');
+
+    document.querySelectorAll('.session-card.expanded').forEach(c => {
+      c.classList.remove('expanded');
+      const b = c.querySelector('.session-body');
+      b.style.maxHeight = '0';
+    });
+
+    if (!isExpanded) {
+      card.classList.add('expanded');
+      body.style.maxHeight = body.scrollHeight + 'px';
+      setTimeout(() => { body.style.maxHeight = body.scrollHeight + 200 + 'px'; }, 50);
+    }
+  }
+
+  function switchTab(btn, panelId) {
+    const tabContainer = btn.closest('.tabs');
+    const bodyInner = btn.closest('.session-body-inner');
+
+    tabContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    bodyInner.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById(panelId);
+    if (panel) panel.classList.add('active');
+
+    const card = btn.closest('.session-card');
+    const body = card.querySelector('.session-body');
+    setTimeout(() => { body.style.maxHeight = body.scrollHeight + 200 + 'px'; }, 10);
+  }
+
+  buildSidebarList();
+  updateProgress();
+</script>
+</body>
+</html>

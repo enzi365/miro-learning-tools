@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Your Miro Mini-Session — Educator Walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow:   #FFD02F;
+    --navy:     #1A1A2E;
+    --coral:    #FF6B6B;
+    --sage:     #52B788;
+    --sky:      #4FC3F7;
+    --lavender: #B39DDB;
+    --white:    #FFFFFF;
+    --off:      #F7F6F2;
+    --mid:      #6B6B7B;
+    --border:   #E4E2DC;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 56px 40px 52px;
+    position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute;
+    top: -70px; right: -70px;
+    width: 340px; height: 340px;
+    background: var(--lavender); border-radius: 50%; opacity: .1;
+  }
+  header::after {
+    content: ''; position: absolute;
+    bottom: -60px; left: 20%;
+    width: 220px; height: 220px;
+    background: var(--yellow); border-radius: 50%; opacity: .08;
+  }
+  .header-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .badge {
+    display: inline-block; background: var(--lavender); color: var(--navy);
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.9rem, 4.5vw, 3rem);
+    font-weight: 700; color: var(--white); line-height: 1.15; max-width: 620px; margin-bottom: 14px;
+  }
+  h1 em { font-style: italic; color: var(--lavender); }
+
+  .subtitle { font-size: 15px; color: rgba(255,255,255,.6); max-width: 560px; line-height: 1.65; margin-bottom: 28px; }
+
+  /* phase pill nav */
+  .phase-nav {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .phase-pill {
+    background: rgba(255,255,255,.1); color: rgba(255,255,255,.8);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 12px; font-weight: 500;
+    text-decoration: none; transition: background .15s;
+  }
+  .phase-pill:hover { background: rgba(255,255,255,.2); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 52px 32px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  /* ── PHASE BLOCK ── */
+  .phase {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .phase-left { position: sticky; top: 32px; }
+
+  .phase-number {
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--mid); margin-bottom: 6px;
+  }
+
+  .phase-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.45rem; font-weight: 700; color: var(--navy);
+    line-height: 1.2; margin-bottom: 10px;
+  }
+
+  .phase-time {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 12px; font-weight: 500; color: var(--mid);
+    margin-bottom: 14px;
+  }
+
+  .phase-desc {
+    font-size: 13.5px; line-height: 1.65; color: var(--mid);
+  }
+
+  /* ── PHASE RIGHT: steps + tools ── */
+  .phase-right { display: flex; flex-direction: column; gap: 16px; }
+
+  /* step card */
+  .step-card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .step-card:hover { box-shadow: 0 6px 24px rgba(26,26,46,.09); }
+
+  .step-accent { height: 4px; }
+
+  .step-body { padding: 20px 22px; }
+
+  .step-header {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+  }
+
+  .step-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .step-meta { flex: 1; }
+
+  .step-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+
+  .step-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem; font-weight: 700; color: var(--navy); line-height: 1.2;
+  }
+
+  .step-text {
+    font-size: 13.5px; line-height: 1.65; color: #3A3A52; margin-bottom: 14px;
+  }
+
+  /* checklist */
+  .checklist { display: flex; flex-direction: column; gap: 6px; }
+
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; line-height: 1.5; color: #3A3A52;
+    padding: 8px 12px; border-radius: 8px; background: var(--off);
+    cursor: pointer; user-select: none; transition: background .15s;
+  }
+  .check-item:hover { background: #EEECEA; }
+
+  .check-item input[type="checkbox"] {
+    width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;
+    accent-color: var(--navy); cursor: pointer;
+  }
+
+  .check-item.done { text-decoration: line-through; opacity: .55; }
+
+  /* technique badge */
+  .technique-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12.5px; font-weight: 500;
+    margin-top: 12px;
+  }
+
+  /* decision widget */
+  .decision-widget {
+    background: var(--white); border-radius: 14px;
+    border: 1px solid var(--border); padding: 20px 22px;
+  }
+
+  .decision-widget h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--navy);
+  }
+
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+
+  .dec-card {
+    border-radius: 10px; padding: 14px;
+    border: 2px solid transparent; cursor: pointer;
+    transition: border-color .15s, transform .15s;
+  }
+  .dec-card:hover { transform: translateY(-2px); }
+  .dec-card.selected { border-color: var(--navy); }
+
+  .dec-card .dc-icon { font-size: 22px; margin-bottom: 6px; }
+  .dec-card .dc-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .dec-card .dc-when { font-size: 11px; line-height: 1.45; }
+
+  /* flow builder */
+  .flow-builder {
+    background: var(--white); border-radius: 14px;
+    border: 1px solid var(--border); padding: 20px 22px;
+  }
+  .flow-builder h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--navy);
+  }
+
+  .flow-slots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .flow-slot {
+    flex: 1; min-width: 100px;
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 12px; text-align: center;
+    font-size: 12px; color: var(--mid); cursor: pointer;
+    transition: border-color .15s, background .15s;
+    min-height: 72px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+  }
+
+  .flow-slot:hover { border-color: var(--navy); background: var(--off); }
+  .flow-slot.filled {
+    border-style: solid; border-color: var(--navy);
+    background: #F0EFF9;
+  }
+  .flow-slot .slot-emoji { font-size: 20px; }
+  .flow-slot .slot-name { font-weight: 600; color: var(--navy); font-size: 12px; }
+  .flow-slot .slot-hint { font-size: 10px; }
+
+  .flow-arrow { color: var(--mid); font-size: 18px; flex-shrink: 0; }
+
+  .flow-panel {
+    margin-top: 14px; display: none;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .flow-panel.open { display: flex; }
+
+  .flow-option {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--off); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12.5px; font-weight: 500; cursor: pointer;
+    transition: background .15s;
+  }
+  .flow-option:hover { background: #EEECEA; }
+  .flow-option .fo-emoji { font-size: 16px; }
+
+  /* time calculator */
+  .time-calc {
+    background: var(--navy); border-radius: 14px; padding: 20px 22px; color: var(--white);
+    margin-top: 16px;
+  }
+  .time-calc h3 {
+    font-family: 'Fraunces', serif; font-size: 1rem; margin-bottom: 14px; color: var(--yellow);
+  }
+  .time-rows { display: flex; flex-direction: column; gap: 8px; }
+  .time-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .time-row:last-child { border-bottom: none; font-weight: 700; color: var(--yellow); font-size: 14px; }
+  .time-label { color: rgba(255,255,255,.7); }
+  .time-val { font-weight: 600; }
+
+  /* tip blocks */
+  .tip-block {
+    background: #FFFBEA; border: 1px solid rgba(255,208,47,.35);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .tip-block .tip-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: #B8860B; margin-bottom: 5px;
+  }
+  .tip-block p { font-size: 13px; line-height: 1.6; color: #7A5F00; }
+
+  /* warning */
+  .warn-block {
+    background: #FFF3F3; border: 1px solid rgba(255,107,107,.25);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .warn-block p { font-size: 13px; line-height: 1.6; color: #7A1C1C; }
+
+  /* divider */
+  .phase-divider {
+    border: none; border-top: 1px solid var(--border);
+  }
+
+  /* colour helpers */
+  .c-yellow { background: #FFD02F; }
+  .c-coral  { background: #FF6B6B; }
+  .c-sage   { background: #52B788; }
+  .c-sky    { background: #4FC3F7; }
+  .c-lav    { background: #B39DDB; }
+
+  .i-yellow { background: #FFF8D6; }
+  .i-coral  { background: #FFE8E8; }
+  .i-sage   { background: #EAFAF2; }
+  .i-sky    { background: #E3F4FD; }
+  .i-lav    { background: #EDE7F6; }
+
+  .t-yellow { color: #8A6A00; }
+  .t-coral  { color: #7A1C1C; }
+  .t-sage   { color: #1D6A47; }
+  .t-sky    { color: #0A5F80; }
+  .t-lav    { color: #4527A0; }
+
+  .tb-yellow { background: #FFF8D6; color: #8A6A00; }
+  .tb-coral  { background: #FFE8E8; color: #7A1C1C; }
+  .tb-sage   { background: #EAFAF2; color: #1D6A47; }
+  .tb-sky    { background: #E3F4FD; color: #0A5F80; }
+  .tb-lav    { background: #EDE7F6; color: #4527A0; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 28px 40px;
+    text-align: center; font-size: 12px; color: var(--mid);
+  }
+  footer strong { color: var(--navy); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    header { padding: 40px 20px 36px; }
+    .main { padding: 36px 16px 60px; gap: 48px; }
+    .phase { grid-template-columns: 1fr; gap: 20px; }
+    .phase-left { position: static; }
+    .decision-grid { grid-template-columns: 1fr; }
+    footer { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="badge">Step-by-Step Walkthrough</span>
+    <h1>Design Your<br><em>Miro Mini-Session</em></h1>
+    <p class="subtitle">A guided workflow that takes you from a blank idea to a fully structured session — with the right Miro technique at every stage.</p>
+    <nav class="phase-nav">
+      <a class="phase-pill" href="#phase1">① Define</a>
+      <a class="phase-pill" href="#phase2">② Choose</a>
+      <a class="phase-pill" href="#phase3">③ Sequence</a>
+      <a class="phase-pill" href="#phase4">④ Build</a>
+      <a class="phase-pill" href="#phase5">⑤ Facilitate</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 1 — DEFINE
+  ══════════════════════════════════════════════════ -->
+  <section class="phase" id="phase1">
+    <div class="phase-left">
+      <p class="phase-number">Phase 01</p>
+      <h2 class="phase-title">Define Your Session</h2>
+      <span class="phase-time">⏱ 10–15 min</span>
+      <p class="phase-desc">Before touching Miro, get clear on your purpose. Every design decision follows from these three anchors.</p>
+    </div>
+    <div class="phase-right">
+
+      <div class="step-card">
+        <div class="step-accent c-lavender"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-lav">🎯</div>
+            <div class="step-meta">
+              <p class="step-tag t-lav">Step 1</p>
+              <h3 class="step-title">Set your learning objective</h3>
+            </div>
+          </div>
+          <p class="step-text">Write one sentence that completes this prompt: <em>"By the end of this session, learners will be able to ___."</em> Use an action verb — analyse, create, evaluate, map, prioritise. This sentence is the north star for every choice you make.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> I can state the objective in one clear sentence</label>
+            <label class="check-item"><input type="checkbox"> The verb is measurable (not just "understand")</label>
+            <label class="check-item"><input type="checkbox"> It's achievable within my session time</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-lavender"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-lav">👥</div>
+            <div class="step-meta">
+              <p class="step-tag t-lav">Step 2</p>
+              <h3 class="step-title">Know your group</h3>
+            </div>
+          </div>
+          <p class="step-text">Your technique choices depend on who's in the room. A group of 4 can hold a rich Concept Mapping discussion; a group of 40 needs Breakout Frames to stay manageable. Answer these before moving on.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Group size: fewer than 10 / 10–25 / 25+ participants</label>
+            <label class="check-item"><input type="checkbox"> Miro experience: first-timers / some experience / confident users</label>
+            <label class="check-item"><input type="checkbox"> Session length: under 20 min / 20–45 min / 45+ min</label>
+            <label class="check-item"><input type="checkbox"> Mode: fully online / hybrid / in-person with shared screen</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-lavender"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-lav">🧩</div>
+            <div class="step-meta">
+              <p class="step-tag t-lav">Step 3</p>
+              <h3 class="step-title">Identify the thinking mode</h3>
+            </div>
+          </div>
+          <p class="step-text">What cognitive work do you need learners to do? Match your session to one of these modes — or a combination for longer sessions.</p>
+          <div class="decision-grid" style="margin-top:4px;">
+            <div class="dec-card" style="background:#FFF8D6;" onclick="this.classList.toggle('selected')">
+              <div class="dc-icon">💡</div>
+              <div class="dc-name">Generate</div>
+              <div class="dc-when" style="color:#7A5F00;">Produce many ideas; divergent thinking</div>
+            </div>
+            <div class="dec-card" style="background:#EAFAF2;" onclick="this.classList.toggle('selected')">
+              <div class="dc-icon">🔗</div>
+              <div class="dc-name">Connect</div>
+              <div class="dc-when" style="color:#1D6A47;">See relationships; build mental models</div>
+            </div>
+            <div class="dec-card" style="background:#FFE8E8;" onclick="this.classList.toggle('selected')">
+              <div class="dc-icon">📦</div>
+              <div class="dc-name">Organise</div>
+              <div class="dc-when" style="color:#7A1C1C;">Sort, cluster, and label information</div>
+            </div>
+            <div class="dec-card" style="background:#E3F4FD;" onclick="this.classList.toggle('selected')">
+              <div class="dc-icon">⚖️</div>
+              <div class="dc-name">Decide</div>
+              <div class="dc-when" style="color:#0A5F80;">Prioritise and converge on choices</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="phase-divider">
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 2 — CHOOSE
+  ══════════════════════════════════════════════════ -->
+  <section class="phase" id="phase2">
+    <div class="phase-left">
+      <p class="phase-number">Phase 02</p>
+      <h2 class="phase-title">Choose Your Technique(s)</h2>
+      <span class="phase-time">⏱ 5–10 min</span>
+      <p class="phase-desc">Match the thinking mode you identified to the Miro technique built for it. For sessions over 30 minutes, combine 2–3 techniques.</p>
+    </div>
+    <div class="phase-right">
+
+      <div class="decision-widget">
+        <h3>🗺 Technique Selector — tap to mark what fits your session</h3>
+        <div class="decision-grid">
+          <div class="dec-card" style="background:#FFF8D6; border-color:#FFD02F;" onclick="this.classList.toggle('selected')">
+            <div class="dc-icon">🗒️</div>
+            <div class="dc-name">Sticky Note Storm</div>
+            <div class="dc-when" style="color:#7A5F00;">Generate → diverge → open a session. Best for 5+ min openers, any group size.</div>
+          </div>
+          <div class="dec-card" style="background:#FFE8E8; border-color:#FF6B6B;" onclick="this.classList.toggle('selected')">
+            <div class="dc-icon">🗂️</div>
+            <div class="dc-name">Affinity Mapping</div>
+            <div class="dc-when" style="color:#7A1C1C;">Organise → synthesise → mid-session. Follows a brainstorm naturally.</div>
+          </div>
+          <div class="dec-card" style="background:#EAFAF2; border-color:#52B788;" onclick="this.classList.toggle('selected')">
+            <div class="dc-icon">🗺️</div>
+            <div class="dc-name">Concept Mapping</div>
+            <div class="dc-when" style="color:#1D6A47;">Connect → small groups → complex topics. Best for 15–45 min deep dives.</div>
+          </div>
+          <div class="dec-card" style="background:#E3F4FD; border-color:#4FC3F7;" onclick="this.classList.toggle('selected')">
+            <div class="dc-icon">🗳️</div>
+            <div class="dc-name">Dot Voting</div>
+            <div class="dc-when" style="color:#0A5F80;">Decide → converge → close a session. 3–10 min; any size.</div>
+          </div>
+          <div class="dec-card" style="background:#EDE7F6; border-color:#B39DDB;" onclick="this.classList.toggle('selected')" style="grid-column: 1 / -1;">
+            <div class="dc-icon">🖼️</div>
+            <div class="dc-name">Breakout Frames</div>
+            <div class="dc-when" style="color:#4527A0;">Structure → parallel groups → large sessions. Use as container for other techniques.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-block">
+        <p class="tip-label">⚡ Matching rule of thumb</p>
+        <p>One technique fits a 10–20 min mini-session. Two techniques (e.g. Storm + Vote) suit 25–35 min. Three techniques (Storm → Affinity → Vote) fill a 40–60 min session with natural momentum.</p>
+      </div>
+
+      <div class="warn-block">
+        <p>⚠️ <strong>First-time Miro users?</strong> Stick to one technique and keep it simple. Familiarity with the canvas matters more than variety — learners who spend 10 minutes figuring out how to add a sticky note won't engage with your content.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="phase-divider">
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 3 — SEQUENCE
+  ══════════════════════════════════════════════════ -->
+  <section class="phase" id="phase3">
+    <div class="phase-left">
+      <p class="phase-number">Phase 03</p>
+      <h2 class="phase-title">Sequence the Flow</h2>
+      <span class="phase-time">⏱ 5–10 min</span>
+      <p class="phase-desc">Order matters. A well-sequenced session moves from open to focused, building momentum toward a clear outcome.</p>
+    </div>
+    <div class="phase-right">
+
+      <div class="flow-builder">
+        <h3>🔁 Build your session flow — click a slot to pick a technique</h3>
+        <div class="flow-slots">
+          <div class="flow-slot" id="slot0" onclick="openPanel(0)">
+            <span class="slot-emoji">＋</span>
+            <span class="slot-hint">Opening move</span>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-slot" id="slot1" onclick="openPanel(1)">
+            <span class="slot-emoji">＋</span>
+            <span class="slot-hint">Middle activity</span>
+          </div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-slot" id="slot2" onclick="openPanel(2)">
+            <span class="slot-emoji">＋</span>
+            <span class="slot-hint">Closing move</span>
+          </div>
+        </div>
+
+        <div class="flow-panel" id="flowPanel">
+          <div class="flow-option" onclick="pickTechnique('🗒️','Sticky Note Storm')"><span class="fo-emoji">🗒️</span> Sticky Note Storm</div>
+          <div class="flow-option" onclick="pickTechnique('🗂️','Affinity Mapping')"><span class="fo-emoji">🗂️</span> Affinity Mapping</div>
+          <div class="flow-option" onclick="pickTechnique('🗺️','Concept Mapping')"><span class="fo-emoji">🗺️</span> Concept Mapping</div>
+          <div class="flow-option" onclick="pickTechnique('🗳️','Dot Voting')"><span class="fo-emoji">🗳️</span> Dot Voting</div>
+          <div class="flow-option" onclick="pickTechnique('🖼️','Breakout Frames')"><span class="fo-emoji">🖼️</span> Breakout Frames</div>
+          <div class="flow-option" onclick="pickTechnique('🚫','— Remove —')"><span class="fo-emoji">🚫</span> Remove</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-sage"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-sage">📐</div>
+            <div class="step-meta">
+              <p class="step-tag t-sage">Sequencing principles</p>
+              <h3 class="step-title">The diamond rule</h3>
+            </div>
+          </div>
+          <p class="step-text">Every good session follows a diamond shape: expand first, then contract. Diverge before you converge. Never open with a decision or close with a brainstorm.</p>
+          <div class="checklist" style="pointer-events:none;">
+            <label class="check-item" style="background:#EAFAF2;"><input type="checkbox" checked disabled> Open: generate or explore (Sticky Note Storm, Concept Map)</label>
+            <label class="check-item" style="background:#EAFAF2;"><input type="checkbox" checked disabled> Middle: organise or connect (Affinity Mapping, Concept Map)</label>
+            <label class="check-item" style="background:#EAFAF2;"><input type="checkbox" checked disabled> Close: decide or reflect (Dot Voting, debrief)</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-calc">
+        <h3>⏱ Time budget calculator</h3>
+        <div class="time-rows">
+          <div class="time-row">
+            <span class="time-label">Intro + instructions</span>
+            <span class="time-val">3–5 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Technique 1 (active work)</span>
+            <span class="time-val">8–12 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Technique 2 (if applicable)</span>
+            <span class="time-val">10–15 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Technique 3 (if applicable)</span>
+            <span class="time-val">5–8 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Debrief + key takeaways</span>
+            <span class="time-val">5–8 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Buffer (technical issues, transitions)</span>
+            <span class="time-val">+5 min</span>
+          </div>
+          <div class="time-row">
+            <span class="time-label">Total recommended minimum</span>
+            <span class="time-val">30–50 min</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="phase-divider">
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 4 — BUILD
+  ══════════════════════════════════════════════════ -->
+  <section class="phase" id="phase4">
+    <div class="phase-left">
+      <p class="phase-number">Phase 04</p>
+      <h2 class="phase-title">Build the Board</h2>
+      <span class="phase-time">⏱ 20–45 min</span>
+      <p class="phase-desc">Now you go into Miro. Work from structure to content — never the other way around.</p>
+    </div>
+    <div class="phase-right">
+
+      <div class="step-card">
+        <div class="step-accent c-sky"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-sky">🏗️</div>
+            <div class="step-meta">
+              <p class="step-tag t-sky">Step A</p>
+              <h3 class="step-title">Set up your frame structure first</h3>
+            </div>
+          </div>
+          <p class="step-text">Create one frame per section of the session. Name each frame clearly. Frames give learners a sense of place on the infinite canvas and let you use Miro's "Present" mode for a guided walkthrough.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Created a "Welcome / Instructions" frame</label>
+            <label class="check-item"><input type="checkbox"> Created one frame per technique in my flow</label>
+            <label class="check-item"><input type="checkbox"> Created a "Debrief / Takeaways" frame</label>
+            <label class="check-item"><input type="checkbox"> Named all frames clearly (not "Frame 1")</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-sky"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-sky">🎨</div>
+            <div class="step-meta">
+              <p class="step-tag t-sky">Step B</p>
+              <h3 class="step-title">Add prompts and scaffolding</h3>
+            </div>
+          </div>
+          <p class="step-text">Inside each frame, add the instructions learners will read while you're talking. Keep them short. Use large text for the main question and smaller text for instructions. Don't overcrowd — white space reduces cognitive load.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Main prompt/question is visible at a glance (large font)</label>
+            <label class="check-item"><input type="checkbox"> Instructions are 3 steps or fewer per frame</label>
+            <label class="check-item"><input type="checkbox"> Colour coding is explained once (e.g. yellow = your team)</label>
+            <label class="check-item"><input type="checkbox"> Example sticky note added to model the format</label>
+          </div>
+
+          <div class="technique-badge tb-sky" style="margin-top:14px;">
+            🖼️ Using Breakout Frames? Add a shared Parking Lot frame outside all group areas for off-topic ideas.
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-sky"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-sky">🔒</div>
+            <div class="step-meta">
+              <p class="step-tag t-sky">Step C</p>
+              <h3 class="step-title">Lock what shouldn't move</h3>
+            </div>
+          </div>
+          <p class="step-text">Any element you don't want learners to accidentally drag — headers, instructions, example cards, cluster labels — should be locked. Right-click → Lock. This single habit prevents the most common session disruptions.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Frame titles locked</label>
+            <label class="check-item"><input type="checkbox"> Instruction text locked</label>
+            <label class="check-item"><input type="checkbox"> Pre-populated example items locked</label>
+            <label class="check-item"><input type="checkbox"> Cluster headers locked (for Affinity Mapping)</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-sky"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-sky">🧪</div>
+            <div class="step-meta">
+              <p class="step-tag t-sky">Step D</p>
+              <h3 class="step-title">Test as a learner</h3>
+            </div>
+          </div>
+          <p class="step-text">Open the board in a private / incognito window and do everything a learner would do. Add a sticky note, drag it, vote, navigate between frames. If anything feels confusing for 30 seconds, redesign it — your learners will have the same confusion in real time.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Opened board in incognito / guest view</label>
+            <label class="check-item"><input type="checkbox"> Added a test sticky note successfully</label>
+            <label class="check-item"><input type="checkbox"> Navigated all frames using Present mode</label>
+            <label class="check-item"><input type="checkbox"> Tested the voting session end-to-end</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="phase-divider">
+
+  <!-- ═══════════════════════════════════════════════
+       PHASE 5 — FACILITATE
+  ══════════════════════════════════════════════════ -->
+  <section class="phase" id="phase5">
+    <div class="phase-left">
+      <p class="phase-number">Phase 05</p>
+      <h2 class="phase-title">Facilitate the Session</h2>
+      <span class="phase-time">⏱ During session</span>
+      <p class="phase-desc">You've planned it — now run it. These moves separate a good facilitator from a great one.</p>
+    </div>
+    <div class="phase-right">
+
+      <div class="step-card">
+        <div class="step-accent c-coral"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-coral">🚀</div>
+            <div class="step-meta">
+              <p class="step-tag t-coral">Opening</p>
+              <h3 class="step-title">Orient before you activate</h3>
+            </div>
+          </div>
+          <p class="step-text">Never jump straight to the activity. Spend 2 minutes orienting: share the board link, show where things are, model adding one sticky note yourself. A 2-minute orientation saves 10 minutes of confusion mid-session.</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Shared board link in chat before session starts</label>
+            <label class="check-item"><input type="checkbox"> Demonstrated one action on the board live</label>
+            <label class="check-item"><input type="checkbox"> Explained the colour / frame system in one sentence</label>
+            <label class="check-item"><input type="checkbox"> Confirmed everyone can see and interact</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-coral"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-coral">⏰</div>
+            <div class="step-meta">
+              <p class="step-tag t-coral">During</p>
+              <h3 class="step-title">Time-keep visibly and narrate transitions</h3>
+            </div>
+          </div>
+          <p class="step-text">Use Miro's built-in timer for timed activities and announce when you move frames. Silence on a shared canvas is uncomfortable — narrate what you see: <em>"I can see ideas coming in from Team B — great, keep going."</em></p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Timer visible to all learners during timed activities</label>
+            <label class="check-item"><input type="checkbox"> Verbal transitions between frames ("Now we'll move to…")</label>
+            <label class="check-item"><input type="checkbox"> Read out 2–3 ideas aloud as they appear to build energy</label>
+            <label class="check-item"><input type="checkbox"> Give a 1-minute warning before each activity ends</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-accent c-coral"></div>
+        <div class="step-body">
+          <div class="step-header">
+            <div class="step-icon i-coral">🎤</div>
+            <div class="step-meta">
+              <p class="step-tag t-coral">Debrief</p>
+              <h3 class="step-title">Connect the board back to the objective</h3>
+            </div>
+          </div>
+          <p class="step-text">The board is a means, not the end. In the debrief, zoom out (Ctrl+Shift+H), show the full session canvas, and tie what you see back to the learning objective stated at the start. Ask learners: "What surprised you? What would you add?"</p>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox"> Zoomed out to show the full session canvas</label>
+            <label class="check-item"><input type="checkbox"> Highlighted 2–3 standout contributions</label>
+            <label class="check-item"><input type="checkbox"> Re-stated the learning objective and showed how it was met</label>
+            <label class="check-item"><input type="checkbox"> Exported the board or shared view link for learner reference</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-block">
+        <p class="tip-label">💡 Post-session habit</p>
+        <p>After each session, spend 5 minutes on the board: screenshot the final state, note one thing that worked and one thing to change, then save the board as a template. Over time you'll build a library of reusable session designs.</p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>Miro Mini-Session Design Guide</strong> · 5-Phase Educator Walkthrough · Companion to the Miro Techniques Reference Cards
+</footer>
+
+<script>
+  // Checkbox done-state
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.check-item').classList.toggle('done', cb.checked);
+    });
+  });
+
+  // Flow builder
+  const techniques = {
+    '🗒️ Sticky Note Storm': { emoji: '🗒️', name: 'Sticky Note Storm' },
+    '🗂️ Affinity Mapping':  { emoji: '🗂️', name: 'Affinity Mapping' },
+    '🗺️ Concept Mapping':   { emoji: '🗺️', name: 'Concept Mapping' },
+    '🗳️ Dot Voting':        { emoji: '🗳️', name: 'Dot Voting' },
+    '🖼️ Breakout Frames':   { emoji: '🖼️', name: 'Breakout Frames' },
+  };
+
+  let activeSlot = null;
+
+  function openPanel(idx) {
+    activeSlot = idx;
+    document.getElementById('flowPanel').classList.add('open');
+  }
+
+  function pickTechnique(emoji, name) {
+    const slot = document.getElementById('slot' + activeSlot);
+    if (name === '— Remove —') {
+      slot.classList.remove('filled');
+      slot.innerHTML = `<span class="slot-emoji">＋</span><span class="slot-hint">${['Opening move','Middle activity','Closing move'][activeSlot]}</span>`;
+    } else {
+      slot.classList.add('filled');
+      slot.innerHTML = `<span class="slot-emoji">${emoji}</span><span class="slot-name">${name}</span>`;
+    }
+    document.getElementById('flowPanel').classList.remove('open');
+    activeSlot = null;
+  }
+
+  // Close flow panel on outside click
+  document.addEventListener('click', (e) => {
+    const panel = document.getElementById('flowPanel');
+    if (activeSlot !== null && !e.target.closest('#flowPanel') && !e.target.closest('.flow-slot')) {
+      panel.classList.remove('open');
+      activeSlot = null;
+    }
+  });
+</script>
+
+</body>
+</html>
